@@ -11,7 +11,7 @@ show the change, reads every field back and checks no heading changed size. `seo
 
 ## Start
 ```bash
-git clone <this repo> ~/hhl-seo-onpage && cd ~/hhl-seo-onpage && ./install.sh
+git clone https://github.com/beckett-web/hhl-seo-onpage-kit.git ~/hhl-seo-onpage && cd ~/hhl-seo-onpage && ./install.sh
 ```
 Open a new terminal, run `claude`, type **`/seo-onpage`** and say **"what do I do first?"**. The skill walks you through
 the rest (your SSH key, connecting each client site, your first audit, your first push).
