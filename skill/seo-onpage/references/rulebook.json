@@ -1,0 +1,1262 @@
+[
+ {
+  "id": "R001",
+  "area": "scope",
+  "rule": "Edit only copy and SEO fields on existing pages (meta title, meta description, heading text, heading tag with its size rule, paragraphs, FAQ question and answer text, schema); never add, remove, move or restyle a section, change a layout or build a page: send those to Beckett.",
+  "why": "Every structural change on a client site has been Beckett's call; the FSO rule is that only header, links, copy, colours and images change, and Yard Dogs' re-shaped buttons (Sep 2026) were caught by him.",
+  "check": "The planned diff touches only text-bearing settings (title, editor, tab_title, tab_content, rank_math_*, schema); any change to elements[] structure, custom_css, typography or a new post id aborts the push.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R002",
+  "area": "scope",
+  "rule": "Never touch WordPress settings outside SEO copy: no plugin installs or removals, caching config, theme or plugin PHP, analytics or tracking IDs, blog_public, permalink structure, user accounts or the Elementor Kit.",
+  "why": "Beckett, WesCo (Sep 2026): \"The skill should never touch WordPress setting stuff\"; those belong to Beckett or the dev.",
+  "check": "The WRITE-SCOPE options list contains only rank-math-options-titles keys explicitly approved for this job; anything else is rejected before the run.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R003",
+  "area": "scope",
+  "rule": "Do not edit or move the \"Painting in Colorado + Florida\" block on Elevation's home page.",
+  "why": "It is the old home page's content, word for word, and carries 85 of the 89 rankings (sweep 12 Oct 2026).",
+  "check": "Element ids of that block are on a protected list; any diff touching them aborts.",
+  "severity": "blocker",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/launch/tamim-seo-handover.html"
+ },
+ {
+  "id": "R004",
+  "area": "scope",
+  "rule": "Never swap one template section for another, or replace a global shortcode block with a per-page copy (or the reverse), on your own call.",
+  "why": "Elevation's market homes got Sunshine's town grid in place of the template's toggle and Beckett asked \"When did I authorize that\" (13 Oct 2026); globals stay globals.",
+  "check": "Element count, widget types and every [elementor-template id=...] shortcode on the page are identical before and after the push.",
+  "severity": "high",
+  "source": "~/.claude/skills/wireframe-to-website/references/fix-ledger.md"
+ },
+ {
+  "id": "R005",
+  "area": "scope",
+  "rule": "Treat any wp_options write (Rank Math identity, esci_* contact options) as a disclosed exception: name it in the scope file and on its own line in the report.",
+  "why": "Some option writes are required (esci phone override, og:site_name) but the settings guardrail says they get their own line every time.",
+  "check": "The push report lists every option written by name; an option write not in WRITE-SCOPE.json fails the guard.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R006",
+  "area": "scope",
+  "rule": "If schema or tracking is hard-coded in theme PHP, a child theme or GTM, do not edit it: report where it lives and escalate.",
+  "why": "ProWash's old agency schema lived in content.php/content-page.php and GTM and blocked the new Rank Math schema (May 2026); the PHP edit was not Tamim's to make.",
+  "check": "grep the rendered HTML for a second ld+json block that Rank Math did not emit; if found, the tool reports its source instead of writing.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-31)"
+ },
+ {
+  "id": "R007",
+  "area": "scope",
+  "rule": "On a site that launched under SEO preserve, make no on-page changes for 4 to 6 weeks, then change one variable at a time.",
+  "why": "Tamim's own rule from the Yard Dogs doc, applied to Elevation (launched 22 Oct 2026, re-sweep 29 Oct): if rankings move you must know why.",
+  "check": "The tool refuses a push on a site whose launch date in the site config is under 28 days old unless Beckett overrides; one change set per page per sweep cycle.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R008",
+  "area": "scope",
+  "rule": "Note out-of-scope problems you find and report them; never fix them in passing.",
+  "why": "FSO stage 8 rule: execute the approved work order and nothing else, so every change on a client site has an owner.",
+  "check": "The push report has a FOUND, NOT FIXED section; the diff contains only the planned rows.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R009",
+  "area": "scope",
+  "rule": "Never add a block that already exists on the page (a second FAQ, trust strip or location block) to get more keywords in.",
+  "why": "Mehedi declined to duplicate a services block on ProWash for duplicate content (May 2026) and Beckett agreed.",
+  "check": "Count H2 texts per page before and after; no H2 text appears twice.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-06)"
+ },
+ {
+  "id": "R010",
+  "area": "scope",
+  "rule": "Never create legal pages, new pages or new posts; a write that creates a post needs allow_new_posts, which is Beckett's.",
+  "why": "Eight sites have no legal pages and Beckett parked them (\"market-wide PP and TOS later\", 22 Sep 2026); page creation is his.",
+  "check": "WRITE-SCOPE.json has allow_new_posts false; the guard aborts any wp_insert_post.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/scripts/guard.php"
+ },
+ {
+  "id": "R011",
+  "area": "process",
+  "rule": "Run every write with SCOPE=<WRITE-SCOPE.json> listing the exact post ids and option names, approved before the run, and every read with READONLY=1.",
+  "why": "The write guard exists because unscoped writes damaged live pages; eval-file with neither declaration is blocked by the hook.",
+  "check": "The command line carries SCOPE= or READONLY=1; the server log prints \"WRITE GUARD active\" and \"N write(s) made, all in scope\".",
+  "severity": "blocker",
+  "source": "~/.claude/hooks/wp-write-guard.sh"
+ },
+ {
+  "id": "R012",
+  "area": "process",
+  "rule": "Take `wp db export` before every write session and keep a per-page revert JSON of _elementor_data plus the rank_math pair.",
+  "why": "Every recovery so far (Dobbins clone scrub hitting Yard Dogs, restored in 2 minutes on 5 Oct 2026) depended on a backup taken first.",
+  "check": "A dated .sql in ~/hhl-backups and one REVERT file per touched post exist before the first write of the session.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R013",
+  "area": "process",
+  "rule": "On Elevation (and any pipeline-built site), edit pages only through `seo push`: it stamps each page _seo_live_edited, and the build push.php skips stamped pages. Never hand-edit in Elementor or wp-admin.",
+  "why": "Before 23 Oct a hand edit was erased by the next build push with no warning; the stamp + skip closes that, but only for edits made through the kit.",
+  "check": "locate.php shows live_edited on the page after a push; push.php logs 'skip <path>: live-edited' on the next build run.",
+  "severity": "blocker",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/launch/tamim-seo-handover.html"
+ },
+ {
+  "id": "R014",
+  "area": "process",
+  "rule": "After anyone edits a page in wp-admin, change it only with targeted ops on the LIVE data; never re-push a whole page compiled from an older pull.",
+  "why": "Yard Dogs (30 Sep 2026): a late copy change nearly wiped the form webhooks Beckett had just mapped in wp-admin.",
+  "check": "The push reads the page's current _elementor_data at run time and writes only the planned element ids; the post_modified time is compared to the last pull and a newer edit stops the run.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#30)"
+ },
+ {
+  "id": "R015",
+  "area": "process",
+  "rule": "Dry-run every multi-page or site-wide change and read the scope report before applying it.",
+  "why": "A live search-replace with no dry run damaged the About page heading; the hook now blocks it.",
+  "check": "Every push has a DRY=1 pass that prints post id, element id, field, old value, new value; zero NOT FOUND rows before the real run.",
+  "severity": "high",
+  "source": "~/.claude/hooks/wp-write-guard.sh"
+ },
+ {
+  "id": "R016",
+  "area": "process",
+  "rule": "Keep copy as data (a JSON or sheet of page, element id, field, new value) and generate the write from it; never hand-type copy into a PHP script.",
+  "why": "The Sunshine and Elevation fills only stayed consistent because copy came from one structured source (services-copy.py, make_fill.py).",
+  "check": "Every changed value in the push traces to a row in the change file.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R017",
+  "area": "process",
+  "rule": "Say what you did not do in the same breath as \"done\" (\"done except X\").",
+  "why": "Ridgeline: \"the project posts are done\" was said while all six still read Bonita Springs, Florida.",
+  "check": "The push report ends with a DEFERRED list, empty or not.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R018",
+  "area": "process",
+  "rule": "Read the whole list before claiming something does not exist (post types, menus, templates, redirects).",
+  "why": "A truncated `wp post-type list` produced a confident wrong claim that a CPT was missing.",
+  "check": "Use --format=json/csv with no pager and count rows before saying \"none\".",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R019",
+  "area": "process",
+  "rule": "After two failed blind fixes, stop and instrument (or escalate) instead of trying a third.",
+  "why": "Sunshine (Aug 2026): two Chromium-based mobile fixes made the live site worse, one locked iOS scrolling.",
+  "check": "A fix attempt counter per issue in the session notes; at 2, the next step is diagnosis, not a write.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R020",
+  "area": "process",
+  "rule": "Log every new miss as one line in the misses ledger or fix ledger, written as a default for next time.",
+  "why": "Beckett (30 Sep 2026): \"all these mistakes we caught, this should never happen again.\"",
+  "check": "Each incident in the session has a matching ledger row before the session ends.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md"
+ },
+ {
+  "id": "R021",
+  "area": "process",
+  "rule": "Commit only the client paths you changed (`git add <paths>`), never `git commit -am`.",
+  "why": "Yard Dogs (30 Sep 2026): commit -am swept other projects' files in the shared workspace.",
+  "check": "git status before commit shows only the intended client folder staged.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#27)"
+ },
+ {
+  "id": "R022",
+  "area": "access",
+  "rule": "Reach a client site only through its row in ~/HHL/sites.json and `wpsite <key>`; if the site is not there, fingerprint the host and ask Beckett for the one missing piece.",
+  "why": "The registry is the single source of truth (19 Sep 2026) and wpsite runs the write guard on the exact command it builds.",
+  "check": "`wpsite list` shows the key; the command used is `wpsite <key> ...`, never a hand-typed ssh.",
+  "severity": "blocker",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_client_sites_registry.md"
+ },
+ {
+  "id": "R023",
+  "area": "access",
+  "rule": "Never edit the Cloudways copies of Sunset (app 6324586) or Legacy (app 6324601): the live sites are on GHL hosting.",
+  "why": "Both Cloudways apps are old copies; edits there change nothing a visitor sees and can be mistaken for the live site.",
+  "check": "`wp option get home` on the target matches the live domain before any write.",
+  "severity": "blocker",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_legacy_wp_access.md"
+ },
+ {
+  "id": "R024",
+  "area": "access",
+  "rule": "Confirm the target app by its home URL and sys_user before writing; never select an app by \"newest\" or by name match.",
+  "why": "Dobbins (5 Oct 2026): a script took the newest app on the shared server and started scrubbing Yard Dogs' staging site.",
+  "check": "`wp option get home` and the sys_user printed at the top of every write run equal the sites.json row.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#31)"
+ },
+ {
+  "id": "R025",
+  "area": "access",
+  "rule": "Write through `wp eval-file` (WP-CLI), never the REST API.",
+  "why": "On GHL hosting app-password REST writes are capability-stripped even for an admin (Sunshine, 10 Aug 2026); WP-CLI runs as system.",
+  "check": "No POST/PUT to /wp-json/ in the tool; writes appear in the guard log.",
+  "severity": "high",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_sunshine_wp_access.md"
+ },
+ {
+  "id": "R026",
+  "area": "access",
+  "rule": "Put config files for server-side scripts in ~/tmp on the server: wpsite does not pass local environment variables through.",
+  "why": "Sunset market stamp (Oct 2026): scripts read ~/tmp/*.json on the server because env vars never arrived.",
+  "check": "The script logs the config path it read and its contents hash.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/references/market-microsites.md"
+ },
+ {
+  "id": "R027",
+  "area": "access",
+  "rule": "Keep MCP connectors and Novamira off production writes; production writes are SSH + WP-CLI only.",
+  "why": "A community MCP returned HTTP 200 and \"success\" while the page went blank (research, Oct 2026).",
+  "check": "No MCP tool call in the push path.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/SKILL.md"
+ },
+ {
+  "id": "R028",
+  "area": "hosting-ghl",
+  "rule": "On GHL-hosted WordPress add --skip-plugins=novamira to every wp command.",
+  "why": "Novamira fatals under the CLI's PHP 7.4 (\"unexpected ':'\") on Sunshine, Legacy and Sunset; without the flag every command dies with a critical error.",
+  "check": "The wpsite helper adds the flag for GHL rows; a command output containing \"critical error\" stops the run.",
+  "severity": "blocker",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_sunshine_wp_access.md"
+ },
+ {
+  "id": "R029",
+  "area": "hosting-ghl",
+  "rule": "After a write on GHL hosting, purge GHL's edge: the site's mu-plugin `CDN_Clear_Cache_Api::cache_api_call([],\"purge_everything\")` where configured, otherwise ask Beckett to press GHL panel > Advanced Settings > Cache management > Clear Cache.",
+  "why": "GHL's Cloudflare caches HTML with s-maxage 30 days; Bespoke's drafted blog stayed public until the panel purge (16 Oct 2026). The mu-plugin is inert without CDN_SITE_ID/CDN_SITE_TOKEN in wp-config (Legacy has them).",
+  "check": "Plain-URL fetch after the purge shows the new text and a small age header.",
+  "severity": "high",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_ghl_wp_hide_blog_and_purge.md"
+ },
+ {
+  "id": "R030",
+  "area": "hosting-ghl",
+  "rule": "Do not set headers, caching or page rules in the client's own Cloudflare zone for a GHL-hosted site: that zone is not in the request path.",
+  "why": "Sunshine (24 Aug 2026): zone settings were accepted and read back but never reached a visitor; GHL fronts with its own Cloudflare.",
+  "check": "A static upload URL does not carry the setting; put origin-level changes in an mu-plugin instead (escalate).",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_ghl_hosting_cloudflare_inert.md"
+ },
+ {
+  "id": "R031",
+  "area": "hosting-ghl",
+  "rule": "To hide a blog on GHL WordPress, unset Settings > Reading > Posts page (page_for_posts 0) as well as drafting the page, then clear the GHL edge.",
+  "why": "Bespoke (16 Oct 2026): a drafted Posts page stays public because WordPress ignores draft status for it.",
+  "check": "Plain URL of the old blog returns 404 after the edge purge.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_ghl_wp_hide_blog_and_purge.md"
+ },
+ {
+  "id": "R032",
+  "area": "hosting-ghl",
+  "rule": "Never run two crawlers at the same time against a GHL-hosted site.",
+  "why": "Sunset (14 Oct 2026): parallel crawls got 429s and the results had to be thrown away.",
+  "check": "The verify step crawls sequentially with a delay; any 429 marks the run invalid.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_sunset_microsite_chrome.md"
+ },
+ {
+  "id": "R033",
+  "area": "hosting-cloudways",
+  "rule": "On Cloudways, verify that Seraphinite's host map matches the live domain; after a domain change it must be rebuilt (seraph-dropin.php) or nothing is cached or optimised.",
+  "why": "Yard Dogs (30 Sep 2026): the clone kept the donor host in advanced-cache.php, mobile PageSpeed sat at 60 until the drop-in was rebuilt.",
+  "check": "Home HTML contains `seraph_accel_gi` and `data-lzl-src`; clean-check area 22 passes.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R034",
+  "area": "hosting-cloudways",
+  "rule": "A 500 on save is usually the server memory limit: stop and escalate, do not retry the write in a loop.",
+  "why": "Mehedi (10 Jul 2026): \"This problem comes from low memory.\"",
+  "check": "Any 500 from a write stops the run and reports.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/references/rules-in-his-words.md"
+ },
+ {
+  "id": "R035",
+  "area": "cache",
+  "rule": "After every write purge every layer in serving order: Elementor CSS + object cache, then Seraphinite's page cache, then Cloudways Varnish, then Cloudflare if it caches HTML.",
+  "why": "Ridgeline showed corrected stats to every cache-busted check and the old stats to Beckett for 46 minutes; WesCo served the previous client's homepage for hours from 903 Seraphinite files.",
+  "check": "`scripts/purge.sh` output shows all four steps; the first plain request after it is x-cache MISS with age 0.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/scripts/purge.sh"
+ },
+ {
+  "id": "R036",
+  "area": "cache",
+  "rule": "Send Varnish PURGE with the site's Host header (`-H \"Host: <domain>\"`), per URL, or with X-Purge-Method: regex for the whole site. (Since 26 Oct 2026 Varnish is OFF on our Cloudways server: Seraphinite is the only page cache. On GHL hosting the layer above Seraphinite is GHL's Rocket.net CDN: purge it with the site panel's Clear Cache.)",
+  "why": "Dobbins (15 Oct 2026): PURGE to 127.0.0.1:8080 without Host returned 200 and purged nothing; the client saw a 40-hour-old page.",
+  "check": "After PURGE, the plain URL returns x-cache MISS (or a small age) and the new text.",
+  "severity": "blocker",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/feedback_varnish_purge_host_header.md"
+ },
+ {
+  "id": "R037",
+  "area": "cache",
+  "rule": "Purge Seraphinite per URL with `seraph_accel\\API::OperateCache(2, \"<full url>\")`; a post id does nothing.",
+  "why": "Elevation About team edit (16 Oct 2026) stayed stale until the full-URL call plus a Varnish PURGE with Host.",
+  "check": "The plain URL serves the edited text after the call.",
+  "severity": "high",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/WHATS-LEFT.md"
+ },
+ {
+  "id": "R038",
+  "area": "cache",
+  "rule": "Remember `wp cache flush` clears only the WordPress object cache, not the page cache visitors get.",
+  "why": "Ridgeline (Aug 2026): object cache flushed, Varnish kept serving the pre-edit HTML.",
+  "check": "Headers on the plain URL, not the flush exit code, decide whether the change is live.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R039",
+  "area": "cache",
+  "rule": "After writing _elementor_data, clear that post's generated CSS and element cache (`wp elementor flush-css`, or delete its _elementor_css and _elementor_element_cache meta).",
+  "why": "Elementor can serve a page's element tree and CSS from its own cache, so the DB changes while the page does not; Elevation's spelling pass deletes _elementor_css after each write.",
+  "check": "Rendered HTML of the post contains the new text after the flush and before any page-cache purge question arises.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/01c-php-section-framework.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/wp/build/us-spelling-tpl.php"
+ },
+ {
+  "id": "R040",
+  "area": "cache",
+  "rule": "Warm the cache one page at a time (about 2 seconds apart) after a full purge, never in parallel.",
+  "why": "A parallel warm of 11 pages on a cold Cloudways site drove load to 9.5 and pages timed out right before a hand-off.",
+  "check": "`warm.sh` runs sequentially; every second hit under 0.6 s.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R041",
+  "area": "cache",
+  "rule": "If cf-cache-status is HIT on HTML, Cloudflare needs its own purge; our token cannot purge, so tell Beckett.",
+  "why": "CLOUDFLARE_API_TOKEN has no Cache Purge permission (8 Oct 2026); DYNAMIC means Cloudflare is not the problem.",
+  "check": "Read cf-cache-status on the plain URL; HIT triggers a message, not a silent pass.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_cloudflare_full_token.md"
+ },
+ {
+  "id": "R042",
+  "area": "cache",
+  "rule": "After a slug change, flush Rank Math's sitemap cache (delete the %rank_math_sitemap% option rows and call Cache::invalidate_storage()).",
+  "why": "Sunshine (27 Aug 2026): the Rank Math sitemap kept listing stale slugs long after the change.",
+  "check": "post-sitemap.xml / page-sitemap.xml list the new slug and not the old one.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R043",
+  "area": "verify",
+  "rule": "Verify every change on the PLAIN canonical URL a visitor hits, never on a ?cb= or any query-string URL.",
+  "why": "A query string bypasses Seraphinite and Varnish, so it proves the DB and nothing else; a stale homepage shipped twice this way (Ridgeline 46 min, WesCo hours).",
+  "check": "curl the exact canonical URL (Safari user agent) and confirm the new text plus x-cache/age headers; if plain and cache-busted disagree, the plain one is the truth.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R044",
+  "area": "verify",
+  "rule": "Read every write back from the database AND from the rendered page; a script's success log or a 200 is never proof.",
+  "why": "A tool that reports \"35 elements updated / NOT FOUND: none\" only proves it found the 35 it was asked for (Ridgeline); a vendor 200 has lied repeatedly.",
+  "check": "Per changed field: DB value equals the planned value, and the stripped rendered text contains it.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R045",
+  "area": "verify",
+  "rule": "Report DB presence and rendered presence separately, and count only published posts, never revisions.",
+  "why": "Legacy (11 Aug 2026): an asbestos licence was called \"live and public\" off a DB hit with zero hits on the page; \"1,023 rows\" was about 768 revisions, the real number was 92.",
+  "check": "Every count in a report says which layer and filters post_status='publish'.",
+  "severity": "high",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_legacy_wp_access.md"
+ },
+ {
+  "id": "R046",
+  "area": "verify",
+  "rule": "Grep the tag-stripped rendered text for visible copy, and the raw HTML for text hiding in attributes, CSS content:, and JSON-LD.",
+  "why": "Sunshine copy hid in attributes, body classes and JSON-LD where a human never looked; a CSS ::after printed \"Serving Southwest Florida\" that no text grep saw (Ridgeline).",
+  "check": "Two greps per page: stripped text and raw HTML including `content:` and ld+json.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R047",
+  "area": "verify",
+  "rule": "When capturing page text, open every accordion and tab and harvest each panel as it opens.",
+  "why": "WesCo landscaping page: all 5 FAQ questions and 4 of 5 answers were missing from the capture; about 100 text slots sitewide were invisible to the gate.",
+  "check": "Captured text includes every tab_title and tab_content of every accordion on the page.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/stress-test.md"
+ },
+ {
+  "id": "R048",
+  "area": "verify",
+  "rule": "Never judge a visibility or animation bug from a headless or background browser.",
+  "why": "The \"blank hero\" bug (Aug 2026) was a measurement artifact: IntersectionObserver never fires in a hidden pane; real devices were fine.",
+  "check": "Confirm on a visibly painting viewport or a real device before reporting.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R049",
+  "area": "verify",
+  "rule": "Use headless Playwright for site checks, never Beckett's own browser.",
+  "why": "Standing rule: site checks must not take over his Chrome or screen.",
+  "check": "The verify step launches its own browser context.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/MEMORY.md (feedback_playwright_not_his_browser)"
+ },
+ {
+  "id": "R050",
+  "area": "verify",
+  "rule": "Read the sitemap's slugs (post-sitemap.xml, page-sitemap.xml) after any rewrite, not just the pages.",
+  "why": "Sunshine (Aug 2026): 8 blog posts were windows content on roofing URLs for months because reviewers read titles and the sitemap holds URLs.",
+  "check": "Every slug in the sitemaps matches its page's current topic; no donor trade words in any slug.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R051",
+  "area": "verify",
+  "rule": "Run the language audit after every copy push: em dashes, British spellings, repeated words, placeholders, periods.",
+  "why": "WesCo shipped \"neighbourhoods\" and \"kerb\" on a Florida site and four review agents missed both.",
+  "check": "`python3 scripts/language-audit.py <url> --extra <paths>` reports zero findings on the touched pages.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/stress-test.md"
+ },
+ {
+  "id": "R052",
+  "area": "verify",
+  "rule": "Check blog_public = 1 and no noindex meta on the live domain whenever you audit a launched site; never change it yourself.",
+  "why": "WesCo (10 Sep 2026) went live with blog_public still 0, a finished site telling Google to index nothing.",
+  "check": "`wp option get blog_public` returns 1 on the live host and the home HTML has no noindex robots meta; a 0 is escalated.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/launch.md"
+ },
+ {
+  "id": "R053",
+  "area": "verify",
+  "rule": "After a rank-holding launch, re-sweep with the same seo.config.json one week later and, for any lost ranking, compare that page to its preserve list first.",
+  "why": "The SEO FSO track (Yard Dogs, Elevation re-sweep 29 Oct 2026) depends on a before/after on identical searches.",
+  "check": "A diff of sweep.json before vs after, per keyword, with the page's preserve rows beside each loss.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R054",
+  "area": "verify",
+  "rule": "Count headings on the rendered page at both 1440 and 390, because some themes print a different block per breakpoint.",
+  "why": "Yard Dogs' old theme rendered sections twice (desktop and mobile copies), doubling raw heading counts.",
+  "check": "Heading inventory taken from visible elements only, per breakpoint.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R055",
+  "area": "headings",
+  "rule": "Never change a heading's tag (H1/H2/H3) without keeping its size: template size rules target the tag (`selector h1`, `selector h2`), so a tag swap changes the rendered size.",
+  "why": "Elevation launch (22 Oct 2026): the hero heading demoted for SEO rendered at 62px instead of 35px on phones; 577 tag-bound rules exist sitewide.",
+  "check": "After the push, the computed font-size and line count of the changed heading at 390 and 1440 equal the values before the push (or the same section on a sibling page).",
+  "severity": "blocker",
+  "source": "~/.claude/skills/wireframe-to-website/references/fix-ledger.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/launch/tamim-seo-handover.html"
+ },
+ {
+  "id": "R056",
+  "area": "headings",
+  "rule": "When a heading tag changes, the widget's custom CSS selector must be re-aimed to the new tag in the same change; if the tool cannot do that safely, escalate instead of swapping the tag.",
+  "why": "Tamim's May 2026 hero H1 changes broke sizes on market, about and service pages until Mehedi swapped `h2` to `h1` in the CSS; batch fix on Legacy, Cold Iron and Mako 23 May.",
+  "check": "The widget's custom_css references the new tag after the push, and the font-size check above passes.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (HED-16); ~/.claude/skills/native-wp-build/references/rules-in-his-words.md"
+ },
+ {
+  "id": "R057",
+  "area": "headings",
+  "rule": "Keep exactly one H1 per page.",
+  "why": "Duplicated pages without _elementor_page_settings print the WP page title as a second H1 (Ridgeline); HHL's own WP home once had 5 H1s used as section labels.",
+  "check": "Count `<h1>` in the rendered HTML of every touched page: always 1.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R058",
+  "area": "headings",
+  "rule": "Keep the accent <span> (and any <br>) inside a heading when you rewrite its text; write `Simple as <span>1-2-3</span>`, not the plain string.",
+  "why": "About 15 headings lost their accent word on WesCo when plain text was written over the span (Aug 2026).",
+  "check": "The number of <span> in each changed heading equals the number before; spans and closing tags balance.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (HED-02)"
+ },
+ {
+  "id": "R059",
+  "area": "headings",
+  "rule": "Make the H1 the exact target keyword with no selling words in front; selling words and the phone go in the meta title and description.",
+  "why": "Tamim's rule (30 Jul 2026); \"FL\" and \"Florida\" are treated the same and the abbreviation keeps titles short.",
+  "check": "The H1 text matches the page's target keyword from the keyword map with no extra words.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-05, HED-12)"
+ },
+ {
+  "id": "R060",
+  "area": "headings",
+  "rule": "On ProWash the service hero H1 is the page title and the excerpt is the paragraph under it; changing the H1 means changing post_title, and they cannot differ there.",
+  "why": "Mehedi (10 May 2026): the ProWash template reads the title into the hero; a separate H1 needs a template rebuild.",
+  "check": "On ProWash service pages, rendered H1 equals post_title after the push.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (HED-15, HED-17)"
+ },
+ {
+  "id": "R061",
+  "area": "headings",
+  "rule": "Write headings in sentence case and check the rendered text: template CSS (`text-transform: capitalize`) or Rank Math capitalize_titles can turn \"in\" into \"In\".",
+  "why": "Yard Dogs (\"And Surrounding Areas\", 30 Sep 2026) and Dobbins (\"In Boca\", 5 Oct 2026).",
+  "check": "Rendered innerText of the heading equals the written string, case included.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#8, #37)"
+ },
+ {
+  "id": "R062",
+  "area": "headings",
+  "rule": "No heading takes a period; every paragraph and sentence-like line does.",
+  "why": "House rule from the language pass (8 Sep 2026); a client caught a descriptive line with no period under a heading.",
+  "check": "language-audit.py punctuation check clean on the touched page.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/stress-test.md"
+ },
+ {
+  "id": "R063",
+  "area": "headings",
+  "rule": "Never open two pages with the same H2.",
+  "why": "Beckett ruling on LCC (15 Sep 2026): keep it on the page it belongs to, use another of the client's lines on the second.",
+  "check": "Site-wide H2 inventory has no duplicate first-section H2.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/stress-calls.json (same-h2-twice)"
+ },
+ {
+  "id": "R064",
+  "area": "headings",
+  "rule": "Keep heading levels in order (no skipped rung) and give each sub-service one H3 with 60 to 120 words under it.",
+  "why": "Site audit HEAD family flags skipped levels; Tamim's sub-service rule for Elevation (12 Oct 2026).",
+  "check": "Rendered outline: H1 then H2s then H3s with no H2 to H4 jump; word count under each sub-service H3 in range.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/site-audit.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/DEV-NOTES.md"
+ },
+ {
+  "id": "R065",
+  "area": "headings",
+  "rule": "Keep a rewritten heading close to the old one's length; line breaks come from the widget's max width, not <br>.",
+  "why": "Mehedi: copy length is a layout input (\"If you write a big word like average there then it will not work\"); a long heading can stack one word per line (LCC ruling).",
+  "check": "Rendered line count of the heading at 390 and 1440 is no more than one line above the original.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/references/rules-in-his-words.md; ~/.claude/skills/free-site-offer/references/stress-calls.json"
+ },
+ {
+  "id": "R066",
+  "area": "meta",
+  "rule": "Rank Math settings live in hyphen-named options (rank-math-options-titles, rank-math-options-general); merge single keys, never write the whole option.",
+  "why": "Yard Dogs (30 Sep 2026): the first scrub used the wrong names and only reset knowledgegraph_name; a whole-option write wipes the array.",
+  "check": "Read the option before and after: only the planned keys changed, key count unchanged.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R067",
+  "area": "meta",
+  "rule": "Set rank_math_title and rank_math_description explicitly on every page you touch; never leave the description empty.",
+  "why": "Empty descriptions fall back to %excerpt% or post_content, which held donor copy (Yard Dogs \"Veteran-owned ... Bradenton\", Sunshine's Fort Myers page sharing as \"Collier County\").",
+  "check": "Both meta keys are non-empty after the push and the rendered <title> and meta description equal them.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#11, #41)"
+ },
+ {
+  "id": "R068",
+  "area": "meta",
+  "rule": "Copy preserved titles and meta descriptions verbatim on a rank-holding site; the only approved edits are the ones on the preserve list.",
+  "why": "Yard Dogs and Elevation: Google titles and descriptions carried word for word (one approved change: a dash to a pipe on the Yard Dogs home).",
+  "check": "Diff rendered title/description against SEO-PRESERVE.md for every preserved page: identical.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/SEO-PRESERVE.md"
+ },
+ {
+  "id": "R069",
+  "area": "meta",
+  "rule": "Keep Rank Math capitalize_titles off.",
+  "why": "With it on, client exact titles change (\"in\" becomes \"In\"), which matters on rank-holding sites (Yard Dogs).",
+  "check": "`rank-math-options-titles.capitalize_titles` = off on every site the tool touches.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R070",
+  "area": "meta",
+  "rule": "Keep titles under about 62 characters and unique per page; never \"Home\" or a placeholder.",
+  "why": "Site audit HEAD family flags titles over 62; Elevation's sitecheck asserts unique titles.",
+  "check": "Rendered <title> length <= 62 and no two pages share a title.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/site-audit.md"
+ },
+ {
+  "id": "R071",
+  "area": "meta",
+  "rule": "Remember post_excerpt is printed by card grids on the home and hub pages, not on the page you are editing.",
+  "why": "Ridgeline/Sunshine: wrong excerpts showed in the home services grid while the page itself looked right.",
+  "check": "After an excerpt change, fetch the pages whose card grid lists that page and find the new text.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R072",
+  "area": "meta",
+  "rule": "Set og:image per page through rank_math_facebook_image_id (the id beats the url), with homepage_facebook_image and open_graph_image as the fallbacks.",
+  "why": "Setting only the URL changes nothing; Rank Math falls back to the featured image, which put a WesCo photo in Yard Dogs' iMessage preview (30 Sep 2026).",
+  "check": "Rendered og:image on the page equals the planned image; test with a fresh URL since iMessage and Facebook cache hard.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/launch.md"
+ },
+ {
+  "id": "R073",
+  "area": "meta",
+  "rule": "Leave deliberate noindex on demo or filler posts (rank_math_robots noindex) alone.",
+  "why": "Clone-carried blog posts ship noindex on purpose; Rank Math drops them from the sitemap.",
+  "check": "Do not include rank_math_robots in a push unless Beckett asked.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R074",
+  "area": "schema",
+  "rule": "Never write schema into Elementor Custom Code (_elementor_code) with update_post_meta from the CLI; write it with a direct guarded $wpdb update, read it back, and assert `<script` is present and the JSON parses.",
+  "why": "Mako (19 Oct 2026): the CLI write ran as user 0 without unfiltered_html, the script wrapper was stripped and raw schema JSON printed on every page; kses_remove_filters() did not stop it.",
+  "check": "After the push, crawl every URL using that snippet: stripped visible text contains no \"@context\", and the ld+json block parses.",
+  "severity": "blocker",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/feedback_schema_script_tags_cli.md"
+ },
+ {
+  "id": "R075",
+  "area": "schema",
+  "rule": "After any schema change, look at the rendered page top to bottom before calling it done.",
+  "why": "Tamim (15 May 2026): a stray character before the script tag printed text above the header.",
+  "check": "No text node outside <script> contains `{`, `@type` or `@context`; header area screenshot unchanged.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-38)"
+ },
+ {
+  "id": "R076",
+  "area": "schema",
+  "rule": "Check that the JSON-LD @graph names the client (knowledgegraph_name, website_name, logo and its _id, phones, address) and not a donor.",
+  "why": "Ridgeline (12 Aug 2026): the <title> said Ridgeline while @graph still said Sunshine State Windows with the donor logo.",
+  "check": "Parse the rendered ld+json and grep for every donor name, phone and domain: zero.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R077",
+  "area": "schema",
+  "rule": "On a multi-market site emit one LocalBusiness (trade type) per market with that market's NAP, on that market's pages only.",
+  "why": "Elevation (Oct 2026): HousePainter per market via the ep-seo.php mu-plugin; a site-wide single NAP would put Colorado's phone on Florida pages.",
+  "check": "On each market page, the schema telephone and address equal that market's config.",
+  "severity": "high",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/MICROSITE-WP.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/WHATS-LEFT.md"
+ },
+ {
+  "id": "R078",
+  "area": "schema",
+  "rule": "Do not add a second schema source on top of an existing one; find and report every emitter (Rank Math, Elementor Custom Code snippets, mu-plugins, theme, GTM).",
+  "why": "Elevation still carried Sunset's sitewide RoofingContractor snippet #7332 until it was drafted; ProWash's old schema blocked the new one.",
+  "check": "Count ld+json blocks and their @type per page: no duplicate LocalBusiness, no donor type.",
+  "severity": "normal",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/WHATS-LEFT.md"
+ },
+ {
+  "id": "R079",
+  "area": "schema",
+  "rule": "On Elevation, change market schema through the build's seo layer (ep-seo.php), not Rank Math's per-page schema.",
+  "why": "The HousePainter blocks are emitted by an mu-plugin pushed by seo.php; Rank Math schema on top would duplicate them.",
+  "check": "The diff touches the seo layer source, and the page still has exactly one HousePainter.",
+  "severity": "normal",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/WHATS-LEFT.md"
+ },
+ {
+  "id": "R080",
+  "area": "schema",
+  "rule": "On a rank-holding launch, keep the old schema identity as it was even where it disagrees with the new footer; fix it later as its own change.",
+  "why": "Yard Dogs schema hours said Mon to Sun 9 to 5 while the footer said Mon to Fri 8 to 6; the rule was hold, don't fix.",
+  "check": "Schema identity fields equal the old site's crawl until the hold period ends.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R081",
+  "area": "schema",
+  "rule": "Allow 24 hours or more for new schema to show in the validator before redoing anything.",
+  "why": "Tamim (14 May 2026) on Sunset and Legacy local schema.",
+  "check": "Validator recheck scheduled for the next day, not repeated edits.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-29)"
+ },
+ {
+  "id": "R082",
+  "area": "schema",
+  "rule": "Check post_author and licence numbers in schema: a donor author slug or a licence with the wrong trade prefix is a leftover.",
+  "why": "SunsetTamim123 leaked into /author/ in schema on Sunshine; a CCC (roofing) licence rode along on a window company (CBC building, CGC general).",
+  "check": "Parse author and licence values in the rendered schema; compare to the client's confirmed facts.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md; ~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R083",
+  "area": "faq",
+  "rule": "Before editing a FAQ, find out if it is a global template (`[elementor-template id=9182]` or 2873) or a per-page accordion; editing the global changes every page that embeds it.",
+  "why": "On the FSO templates the FAQ is one library template pulled in by shortcode; Tamim hit this on Legacy service pages (5 to 8 May 2026).",
+  "check": "Resolve the FAQ's post id from the page's shortcode; the scope report lists every page that embeds it before the write.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R084",
+  "area": "faq",
+  "rule": "Confirm an accordion is actually the FAQ before writing to it; the accordion under a hero is often an explainer.",
+  "why": "Sunshine (Aug 2026): the under-hero explainer accordion was mapped as FAQ and clobbered, palette swatches included.",
+  "check": "Dump id, widget type and tab titles and match them to the rendered FAQ heading before the push.",
+  "severity": "high",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R085",
+  "area": "faq",
+  "rule": "Unique FAQs per page is the SEO goal, but turning a global FAQ into per-page FAQs is a structural change: escalate it.",
+  "why": "Tamim and Beckett (4 May 2026): global FAQs across pages are bad for SEO; free sites ship one global FAQ and per-page FAQs come with the SEO upgrade.",
+  "check": "A request for a page-specific FAQ on a page that embeds a global FAQ produces an escalation, not a write.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (HED-23, SEC-24, SEC-25)"
+ },
+ {
+  "id": "R086",
+  "area": "faq",
+  "rule": "Edit FAQ items in the accordion's repeater (`settings.tabs[i].tab_title` and `tab_content`), keeping item count and order unless asked.",
+  "why": "Repeaters are invisible to sweeps written for title/editor (Ridgeline: service-page tabs kept impact-window copy).",
+  "check": "Tab count before and after is equal; every tab_title changed is the planned one.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R087",
+  "area": "faq",
+  "rule": "Answer a question heading in the first sentence under it, and never name a service the client does not list or a price.",
+  "why": "Beckett rulings on LCC (15 Sep 2026); Elevation answers cost as what drives the price, no number.",
+  "check": "First sentence of each answer addresses the question; no service outside the services list; no $ figures.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/stress-calls.json; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/DEV-NOTES.md"
+ },
+ {
+  "id": "R088",
+  "area": "content",
+  "rule": "Write by element id and field; never string-replace raw _elementor_data.",
+  "why": "Elementor stores curly apostrophes escaped so phrases silently fail to match, and phrase maps converted half a sentence on Ridgeline (\"... or a screen for the lanai\" on a fence site).",
+  "check": "Every planned row names post id + element id + field; the tool decodes JSON, sets the field, re-encodes; zero raw str_replace on the meta string.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/references/content-swap.md"
+ },
+ {
+  "id": "R089",
+  "area": "content",
+  "rule": "Replace whole paragraphs, not fragments of sentences, and swap longer strings before shorter ones.",
+  "why": "\"Replace\" to \"Security\" turned \"Window Replacement\" into \"Window Securityment\"; a phrase swap ate a tag and printed \"Fort Myers./span>\".",
+  "check": "After the push, each changed field has balanced tags (count <span vs </span>) and contains the full planned paragraph.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md; ~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (HED-20)"
+ },
+ {
+  "id": "R090",
+  "area": "content",
+  "rule": "No em dashes in any copy you write; use a comma or a full stop.",
+  "why": "House style; on rank-holding pages the em dash to comma swap is the one allowed edit to preserved paragraphs.",
+  "check": "Rendered text of every touched page contains no U+2014.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/stress-test.md"
+ },
+ {
+  "id": "R091",
+  "area": "content",
+  "rule": "Use US spelling on US sites (color, neighborhood, license, center, gray, aluminum).",
+  "why": "WesCo shipped \"neighbourhoods\" and \"kerb\"; Elevation needed a US spelling pass on pages and templates (13 Oct 2026).",
+  "check": "language-audit British-spelling check returns zero on touched pages; swaps use word boundaries so class names and paths are untouched.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/stress-test.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/wp/build/us-spelling-tpl.php"
+ },
+ {
+  "id": "R092",
+  "area": "content",
+  "rule": "Keep every ranking heading and the paragraphs under it word for word on a rank-holding site; only em dash to comma and Tamim-approved H1 edits are allowed.",
+  "why": "Tamim's preserve rule (29 Sep 2026), used on Yard Dogs and Elevation.",
+  "check": "Diff each preserved string from SEO-PRESERVE.md against the rendered page: identical except listed edits.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md"
+ },
+ {
+  "id": "R093",
+  "area": "content",
+  "rule": "Every number, warranty, award or claim must trace to something the client said; never invent or carry one over.",
+  "why": "Ridgeline launched claiming 6,400 projects this year (Sunset's number) for a company founded in January; Elevation's warranty is 7-year, not lifetime.",
+  "check": "Each number in new copy maps to a fact-gate row; counters checked in starting_number/ending_number/suffix too.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R094",
+  "area": "content",
+  "rule": "If a field is bound to a dynamic tag (`__dynamic__`) or a global, writing the literal does nothing: change the source (esci_* option, ACF field) or remove the binding with Beckett's OK.",
+  "why": "Yard Dogs contact boxes kept Sunshine's phone because a dynamic tag overrode the static text; buttons read \"Get a Free Estimate\" from esci_consultation_text.",
+  "check": "Before writing, the tool checks the element for __dynamic__ / __globals__ on that field and routes or escalates.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEC-29)"
+ },
+ {
+  "id": "R095",
+  "area": "content",
+  "rule": "Copy that a client named exactly ships exactly; put any concern in one line after it, never a substitute.",
+  "why": "Beckett (5 Oct 2026): his specific words are the spec.",
+  "check": "Client-specified strings appear verbatim in the rendered page.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R096",
+  "area": "content",
+  "rule": "Remove placeholder or hidden text instead of hiding it with CSS.",
+  "why": "Pax (22 Dec 2025) was flagged by Amazon after launch for lorem ipsum in hidden sections.",
+  "check": "No lorem/TODO/{{token}} in raw HTML, visible or not.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-16)"
+ },
+ {
+  "id": "R097",
+  "area": "content",
+  "rule": "Find text printed by CSS `content:` in the raw HTML and change only the quoted string, leaving every other CSS declaration byte for byte.",
+  "why": "Ridgeline printed \"Serving Southwest Florida\" via ::after; Dobbins card labels read \"See landscaping\" from CSS.",
+  "check": "grep raw HTML for `content:` on the touched page; only the quoted string changed in the diff.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md; ~/.claude/skills/free-site-offer/references/misses-ledger.md (#36)"
+ },
+ {
+  "id": "R098",
+  "area": "content",
+  "rule": "Treat sitewide text outside the main content (top bar, hidden tagline, footer NAP and hours, footer blurb) as ranking text too.",
+  "why": "Beckett caught the \"Volusia County and the Surrounding Areas\" bar on Yard Dogs; the footer blurb is esci_footer_text, not Elementor.",
+  "check": "The preserve and change lists include header, footer and option-sourced strings.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md; ~/.claude/skills/free-site-offer/references/misses-ledger.md (#1)"
+ },
+ {
+  "id": "R099",
+  "area": "content",
+  "rule": "Give each market, town or city page its own 150 to 300 word local paragraph; never repeat one paragraph across pages.",
+  "why": "Tamim's thin-content rule (Elevation, 12 Oct 2026); many city pages from one template read as duplicate content.",
+  "check": "Similarity between local paragraphs on any two pages stays low (no shared sentence).",
+  "severity": "normal",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/DEV-NOTES.md"
+ },
+ {
+  "id": "R100",
+  "area": "content",
+  "rule": "Use one link format per field (relative path or full URL, not both), and check hard-coded card and button links: publishing a page does not fix them.",
+  "why": "ProWash built a doubled URL (site/free-quote/https://site/free-quote/); Sunshine card links were hard-coded \"#\".",
+  "check": "Every href on touched pages resolves with one 200 and none is \"#\".",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-19); ~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R101",
+  "area": "content",
+  "rule": "Never link to a parked or unlaunched page.",
+  "why": "Elevation (Oct 2026): pages built but not launching sit in one parked set and nothing may link to them.",
+  "check": "Every internal href on a touched page returns 200 for a published page.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/fix-ledger.md"
+ },
+ {
+  "id": "R102",
+  "area": "content",
+  "rule": "Phone links are always `tel:+1` followed by ten digits.",
+  "why": "Ridgeline's tel:+4237798436 and Sunset's tel:+1:2399202414 looked right on screen and dialled nowhere.",
+  "check": "Regex on every tel: href: ^tel:\\+1\\d{10}$.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md; ~/.claude/skills/native-wp-build/references/market-microsites.md"
+ },
+ {
+  "id": "R103",
+  "area": "elementor",
+  "rule": "Store _elementor_data with `wp_slash(wp_json_encode($data))` and validate the JSON before writing.",
+  "why": "Elementor stores the meta slashed; writing it unslashed corrupts the page, and Elevation's scripts stop on invalid JSON.",
+  "check": "json_decode of the stored meta succeeds after the write and the element count is unchanged.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/wp/build/us-spelling-tpl.php"
+ },
+ {
+  "id": "R104",
+  "area": "elementor",
+  "rule": "Dump every string setting of the page, including repeater arrays (items, tabs, slides, cards), before planning a change.",
+  "why": "Six of Ridgeline's misses were repeater arrays, each named differently, that a title/editor sweep never saw.",
+  "check": "The plan is built from a full dump, not from the editor's visible fields.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R105",
+  "area": "elementor",
+  "rule": "Regenerate post_content after writing _elementor_data (regen-content.php).",
+  "why": "post_content is a stale snapshot that site search, Rank Math meta and schema read; Dobbins search results showed donor text after a perfect fill (5 Oct 2026).",
+  "check": "post_content of the touched post contains the new text after the push.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#38)"
+ },
+ {
+  "id": "R106",
+  "area": "elementor",
+  "rule": "Check globalTemplateID before assuming a section is shared: \"global-looking\" sections are often per-page copies that need every instance changed.",
+  "why": "Sunshine's services cards were a per-page copy on 17 pages; editing the home page propagated nothing.",
+  "check": "The plan lists every instance of the section by post id, or the one template id if it is truly global.",
+  "severity": "high",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md"
+ },
+ {
+  "id": "R107",
+  "area": "elementor",
+  "rule": "On Legacy, Diamond and the OG template, service and city pages are ACF-driven (hero, sub-services, FAQ, workflow come from ACF fields); on the Sunshine-lineage FSO sites they live in _elementor_data. Edit the layer that renders.",
+  "why": "Legacy's 73 service and city pages have zero page trees (one template #2254 + ACF); a Legacy hero imported empty because its copy is bound by ACF dynamic tags.",
+  "check": "Before writing, the tool checks whether the target widget carries an acf dynamic tag; if so it writes the ACF field.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/research/01-mehedi-method.md; ~/.claude/skills/wireframe-to-website/references/hhl-section-library.md"
+ },
+ {
+  "id": "R108",
+  "area": "elementor",
+  "rule": "After a structured write, scan the post for duplicate element ids.",
+  "why": "A dangling foreach-by-reference variable overwrote a heading on 6 pages with a \"4.\" step marker; the duplicate-id scan caught it.",
+  "check": "elementor-repair.php duplicate-id report is empty for touched posts.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R109",
+  "area": "elementor",
+  "rule": "Do not rename menus, terms or page slugs as part of a copy edit: Elementor's nav widget references menus by slug and silently falls back to the first menu.",
+  "why": "Ridgeline (12 Aug 2026): a menu rename left all three footer columns showing the same four links.",
+  "check": "No menu/term rename in the plan; if Beckett approves one, grep templates for the old slug afterwards.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/content-swap.md"
+ },
+ {
+  "id": "R110",
+  "area": "elementor",
+  "rule": "Some template sections are locked from the SEO editor or bound to fields; if a heading cannot be found in the page's own data, look in its template or ACF before concluding it is missing.",
+  "why": "Cold Iron and the city-service template exposed only the hero, the next heading and the FAQ to the SEO team (Jun 2026).",
+  "check": "Unfound strings are traced to a template id or ACF field in the report.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEC-55)"
+ },
+ {
+  "id": "R111",
+  "area": "templates-globals",
+  "rule": "Treat shared templates as site-wide edits: service areas 2478 (Sunset markets 6057, 6062, 6067, 6070), FAQ 9182 / 2873, header 14, footer 47, lead forms 9936 / 2535 / 2087; editing one changes every page that embeds it.",
+  "why": "Beckett (23 Sep 2026): \"you don't have to sweep 11 pages\" for a string that lives in one template, and sweeping creates inconsistent copies.",
+  "check": "Resolve each shortcode id on the page first; the scope report lists every page that embeds the template; verify on two of them after the push.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/free-site-offer/references/stress-calls.json (global-templates-edit-once); ~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R112",
+  "area": "templates-globals",
+  "rule": "Theme-builder templates apply by condition (single service #2254, city-service #2677, single project #1347, project archive #1146, blog archive #1411, single post #1457): an edit lands on every page of that type.",
+  "why": "The HHL template set is one master template applied site-wide on Sunset and Legacy.",
+  "check": "The plan names the template and the count of pages it renders.",
+  "severity": "high",
+  "source": "~/.claude/skills/wireframe-to-website/references/hhl-section-library.md"
+ },
+ {
+  "id": "R113",
+  "area": "templates-globals",
+  "rule": "On Sunset, 2873 (Global FAQ) and 7732 (why choose us) are source templates not linked from live pages; the live pages hold their own copies.",
+  "why": "Sunset microsite work (14 Oct 2026) found pages carrying duplicated copies with the same widget ids.",
+  "check": "Search the page's own _elementor_data for the string before editing a library template.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_sunset_microsite_chrome.md"
+ },
+ {
+  "id": "R114",
+  "area": "templates-globals",
+  "rule": "Per-page strings still need a per-page edit: H1s and their spans, \"Recent work across X\" strips, excerpts, Rank Math fields, ACF fields and esci page overrides.",
+  "why": "Global-templates rule (LCC, 23 Sep 2026): only the template-held blocks are edit-once.",
+  "check": "The plan separates template rows from page rows.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R115",
+  "area": "templates-globals",
+  "rule": "Hide a header button with visibility:hidden, never display:none (escalate the CSS change).",
+  "why": "Elevation (22 Oct 2026): display:none collapsed the flex row and slid the nav off-centre.",
+  "check": "Header nav x-position at 1440 unchanged after the change.",
+  "severity": "normal",
+  "source": "~/.claude/skills/wireframe-to-website/references/fix-ledger.md"
+ },
+ {
+  "id": "R116",
+  "area": "templates-globals",
+  "rule": "Keep unused template pages (city-service template, location template) in draft; never publish one.",
+  "why": "A published city-service template page with excavation copy sat on a construction site until unpublished (7 May 2026).",
+  "check": "No page titled like a template slug (city-service, template) is published.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEC-65)"
+ },
+ {
+  "id": "R117",
+  "area": "microsite",
+  "rule": "On Sunset-style multi-market sites every page of a market must carry its own stamps (_market_nav_menu, _market_footer_menu_1..3, _esci_page_phone, _esci_page_phone_tel, _esci_page_email, _esci_page_location); there is no inheritance.",
+  "why": "Sunset (14 Oct 2026): menus were stamped but contact only on home and contact pages, so 108 service, about and city pages showed Fort Myers' phone.",
+  "check": "market_audit.py prints ALL CONSISTENT after any edit on a multi-market site.",
+  "severity": "high",
+  "source": "~/.claude/skills/native-wp-build/references/market-microsites.md"
+ },
+ {
+  "id": "R118",
+  "area": "microsite",
+  "rule": "Never put another market's phone, address, warranty or photos on a market page.",
+  "why": "Elevation (Oct 2026): market tokens come from the page's market; lifetime warranty and Colorado exteriors never on Florida pages.",
+  "check": "Crawl each market's pages for every other market's phone digits and address: zero hits.",
+  "severity": "high",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/DEV-NOTES.md"
+ },
+ {
+  "id": "R119",
+  "area": "microsite",
+  "rule": "Know which chrome mechanism the site uses: Sunset = one header and footer plus per-page meta; Elevation = header and footer templates by URL section (display conditions).",
+  "why": "Elevation chose display conditions so the market chrome cannot drift (13 Oct 2026); editing the wrong layer changes nothing.",
+  "check": "The site config records the mechanism; the tool edits the matching layer.",
+  "severity": "normal",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/MICROSITE-WP.md"
+ },
+ {
+  "id": "R120",
+  "area": "microsite",
+  "rule": "Body-copy phone numbers and emails are plain text, not from the contact plugin: update them by hand and audit for leaks.",
+  "why": "Sunset bug list item 8 (Oct 2026).",
+  "check": "market_audit.py leak check clean.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/references/market-microsites.md"
+ },
+ {
+  "id": "R121",
+  "area": "microsite",
+  "rule": "On Elevation the WordPress front page is the Colorado page and /colorado/ 301s to /.",
+  "why": "Set at launch (22 Oct 2026) so the home keeps the old home page's 85 rankings.",
+  "check": "`wp option get page_on_front` returns the Colorado page id; /colorado/ returns one 301 to /.",
+  "severity": "normal",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/launch/tamim-seo-handover.html"
+ },
+ {
+  "id": "R122",
+  "area": "microsite",
+  "rule": "Market service-area blocks are market-wide templates (one per market), not one global.",
+  "why": "Beckett (4 May 2026): a single global would show the wrong cities on other markets.",
+  "check": "Each market page embeds its own market's service-area template id.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEC-44)"
+ },
+ {
+  "id": "R123",
+  "area": "redirects",
+  "rule": "Resolve every page by its path, never by \"the front page\" (page_on_front), and never re-push a drafted page.",
+  "why": "Elevation (22 Oct 2026): push.php resolved the brand-home row as page_on_front after / was switched to Colorado, overwrote Colorado with the drafted home and / went 404.",
+  "check": "Every row in the push names a path; the tool aborts if a row's target is page_on_front or post_status is draft.",
+  "severity": "blocker",
+  "source": "~/.claude/skills/wireframe-to-website/references/fix-ledger.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/wp/build/push.php"
+ },
+ {
+  "id": "R124",
+  "area": "redirects",
+  "rule": "Never add or re-add a redirect for /blog or /contact to its trailing-slash form; WordPress already adds the slash and Rank Math strips it, which loops.",
+  "why": "Elevation (Oct 2026): /blog to /blog/ looped and the redirect was deleted (rm-blog-redirect.php); /contact was dropped for the same reason.",
+  "check": "curl -sIL on every redirect source: one 301 hop to a 200, never a cycle or more than 2 hops.",
+  "severity": "blocker",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/wp/build/rm-blog-redirect.php"
+ },
+ {
+  "id": "R125",
+  "area": "redirects",
+  "rule": "Never change a slug yourself; if Beckett approves one, add a 301 from the old URL, keep _wp_old_slug, rewrite menu and breadcrumb links, and flush the sitemap cache.",
+  "why": "Slug changes are URL changes; Ridgeline's /services-hub/ fix needed _wp_old_slug and link rewrites (12 Aug 2026).",
+  "check": "Old URL returns 301 to the new one; no internal href points at the old slug.",
+  "severity": "high",
+  "source": "~/.claude/skills/wireframe-to-website/references/wp-elementor-cli-fill.md; ~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-45)"
+ },
+ {
+  "id": "R126",
+  "area": "redirects",
+  "rule": "Redirects live in Rank Math's redirections table; after editing them delete the rank_math_redirections_cache transient.",
+  "why": "Elevation's redirect fix cleared the transient so the change took effect.",
+  "check": "The changed source returns the new status on a plain request.",
+  "severity": "normal",
+  "source": "~/claudecode-workspace/Client-Work/Elevation-Painting/site/wp/build/rm-blog-redirect.php"
+ },
+ {
+  "id": "R127",
+  "area": "redirects",
+  "rule": "Keep existing URLs exactly and 301 every removed URL to its closest page.",
+  "why": "Tamim's preserve rule; Elevation carried 30 redirects including old 2019 to 2021 WordPress URLs, junk URLs left 404.",
+  "check": "Every old URL in the preserve 301 map returns one 301 to a 200.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/seo-fso.md; ~/claudecode-workspace/Client-Work/Elevation-Painting/site/launch/tamim-seo-handover.html"
+ },
+ {
+  "id": "R128",
+  "area": "images",
+  "rule": "Alt text lives in two places, the widget's image.alt and the attachment's _wp_attachment_image_alt, and survives an image swap: set or clear both.",
+  "why": "Ridgeline (12 Aug 2026) shipped 18 inline and 46 attachment alts describing palms and storm skies behind Tennessee fence photos.",
+  "check": "Rendered alt of each touched image equals the planned alt; attachment meta matches.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/done-gate.md"
+ },
+ {
+  "id": "R129",
+  "area": "images",
+  "rule": "A page's featured image is the og:image fallback even when the page never shows it.",
+  "why": "Yard Dogs (30 Sep 2026): featured images were donor photos and showed in the iMessage preview.",
+  "check": "Every touched page has its own _thumbnail_id or an explicit rank_math_facebook_image_id.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#12)"
+ },
+ {
+  "id": "R130",
+  "area": "images",
+  "rule": "Never AI-edit, upscale or restore a client's real photos; geotag with the tool and name folders by project type and city, never street address.",
+  "why": "Standing rule on real photos; Tamim's geotag and folder method (May to Jun 2026).",
+  "check": "Uploaded file hash equals the original apart from EXIF geotag.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-12)"
+ },
+ {
+  "id": "R131",
+  "area": "images",
+  "rule": "The favicon is a PNG (512 square), never SVG or WebP, and Google takes days to show a new one.",
+  "why": "Safari and iOS ignore SVG favicons; Google rejects WebP; Sunshine's favicon change took days (17 Aug 2026).",
+  "check": "site_icon attachment mime is image/png.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md; ~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-07)"
+ },
+ {
+  "id": "R132",
+  "area": "images",
+  "rule": "After replacing an SVG file, re-sync the attachment's _elementor_inline_svg meta.",
+  "why": "Elementor inlines the meta, not the file; overwriting the .svg changed nothing twice in one day.",
+  "check": "Rendered inline SVG equals the new file.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/SKILL.md"
+ },
+ {
+  "id": "R133",
+  "area": "legal",
+  "rule": "Check privacy, terms and ADA pages for the client's own company name, phone (text and tel: link) and an email whose domain has MX; fix post_content as well as _elementor_data.",
+  "why": "22 Sep 2026: four live privacy policies named Sunshine State Hurricane Protection and a dead email domain; LCC showed WesCo's phone with Ridgeline's tel: link; donor text survived in post_content on three sites.",
+  "check": "`scripts/legal-audit.py` prints ok for the site; `dig +short <domain> MX` is non-empty.",
+  "severity": "high",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_legal_pages_audit.md"
+ },
+ {
+  "id": "R134",
+  "area": "legal",
+  "rule": "Known open item: Bucktown's privacy page is unlinked and gives a dead-domain email (real: wade@bucktowngradingandconstruction.com) with two broken tel: links sitewide.",
+  "why": "Blocked on the GHL key import (22 Sep 2026).",
+  "check": "legal-audit.py row for Bucktown.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/reference_legal_pages_audit.md"
+ },
+ {
+  "id": "R135",
+  "area": "dns",
+  "rule": "Never touch MX, SPF, DKIM, DMARC or _domainconnect records; DNS changes beyond a verification TXT are Beckett's.",
+  "why": "Losing them sends the client's mail to spam silently (WesCo migration, Sep 2026).",
+  "check": "The only DNS write the tool may request is a google-site-verification TXT, approved.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/launch.md"
+ },
+ {
+  "id": "R136",
+  "area": "dns",
+  "rule": "Verify Search Console by a DNS TXT record (send the value to Claude, it is added in Cloudflare), not a WordPress meta tag.",
+  "why": "Linking GSC to GA4 needs a verified owner; full GSC user access was not enough (13 May 2026); Elevation's handover uses DNS.",
+  "check": "`dig +short TXT <domain>` shows the google-site-verification value.",
+  "severity": "normal",
+  "source": "~/.claude/skills/native-wp-build/research/02-wp-feature-bank.md (SEO-13); ~/claudecode-workspace/Client-Work/Elevation-Painting/site/launch/tamim-seo-handover.html"
+ },
+ {
+  "id": "R137",
+  "area": "dns",
+  "rule": "The canonical host is always www with trailing slashes; the apex 301s to www.",
+  "why": "Beckett (9 Oct 2026): \"when we do domains, it's always www\" (Dobbins went apex by mistake).",
+  "check": "https://<apex>/ returns 301 to https://www.<domain>/; canonical tags use www.",
+  "severity": "normal",
+  "source": "~/.claude/projects/-Users-beckettcolee-claudecode-workspace/memory/feedback_domains_always_www.md"
+ },
+ {
+  "id": "R138",
+  "area": "dns",
+  "rule": "If a site \"isn't loading\" right after a DNS change, check negative DNS cache before touching anything.",
+  "why": "Cloudflare's SOA negative TTL is 30 minutes; checking in the same minute poisons your own resolver.",
+  "check": "dig works + curl fails + curl --resolve works means nothing is wrong with the site.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/launch.md"
+ },
+ {
+  "id": "R139",
+  "area": "forms",
+  "rule": "Never edit form fields, recipients or webhooks; forms are the template's native Elementor forms and Beckett maps every webhook.",
+  "why": "Yard Dogs forms posted into another client's GHL until rewired; a whole-page re-push nearly wiped mapped webhooks (30 Sep 2026).",
+  "check": "No form widget settings in the push diff; clean-check area 17 still passes after the push.",
+  "severity": "high",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#15, #30)"
+ },
+ {
+  "id": "R140",
+  "area": "forms",
+  "rule": "Fact-gate the text inside form templates (9936, 2087, 2535) like any other copy.",
+  "why": "Dobbins (5 Oct 2026): the contact form promised \"We'll get back to you within 2 hours. Guaranteed.\" from the donor.",
+  "check": "Rendered form text has no claim missing from the fact gate.",
+  "severity": "normal",
+  "source": "~/.claude/skills/free-site-offer/references/misses-ledger.md (#40)"
+ }
+]

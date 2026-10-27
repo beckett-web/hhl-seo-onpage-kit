@@ -1,0 +1,8 @@
+research/
+runs/
+*.env
+keys.env
+sites.json
+.DS_Store
+__pycache__/
+node_modules/

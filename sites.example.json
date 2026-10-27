@@ -1,0 +1,17 @@
+{
+  "example-cloudways": {
+    "name": "Client Name (Cloudways)", "hosting": "cloudways",
+    "base": "https://www.clientdomain.com",
+    "host": "159.203.65.36", "user": "APP_USERNAME_FROM_BECKETT", "key": "~/.ssh/hhl_seo", "port": 22,
+    "wp_path": "~/public_html",
+    "purge": ["wp elementor flush-css >/dev/null 2>&1",
+              "rm -rf wp-content/cache/seraphinite-accelerator/* 2>/dev/null"]
+  },
+  "example-ghl": {
+    "name": "Client Name (GHL WordPress)", "hosting": "ghl",
+    "base": "https://www.clientdomain.com",
+    "host": "HOST_FROM_GHL_PANEL", "user": "USER_FROM_GHL_PANEL", "key": "~/.ssh/hhl_seo", "port": 22,
+    "wp_path": "~/public_html",
+    "purge": []
+  }
+}

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# savekey NAME value  -> stores an API key on THIS machine only (~/.seo-onpage/keys.env, chmod 600). Never commit keys.
+set -euo pipefail
+N="${1:?usage: savekey NAME value}"; V="${2:?usage: savekey NAME value}"; F="${SEO_HOME:-$HOME/.seo-onpage}/keys.env"
+mkdir -p "$(dirname "$F")"; touch "$F"; chmod 600 "$F"
+grep -v "^export $N=" "$F" > "$F.tmp" || true; echo "export $N=\"$V\"" >> "$F.tmp"; mv "$F.tmp" "$F"; chmod 600 "$F"
+echo "saved $N to $F (load with: source $F)"
